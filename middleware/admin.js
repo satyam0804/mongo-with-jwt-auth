@@ -1,6 +1,6 @@
 // Middleware for handling auth
 const jwt = require("jsonwebtoken");
-const { JWT_Secret } = require("../index");
+const { JWT_SECRET } = require("../config");
 function adminMiddleware(req, res, next) {
   // Implement admin auth logic
   // You need to check the headers and validate the admin from the admin DB. Check readme for the exact headers to be expected
@@ -9,14 +9,14 @@ function adminMiddleware(req, res, next) {
   const words = token.split(" "); // "Bearer", "token"
   const jwtToken = words[1]; // "token"
 
-  const decodedToken = jwt.verify(jwtToken, JWT_Secret);
-
   try {
-    if (decodedToken.username) {
+    const decodedToken = jwt.verify(jwtToken, JWT_SECRET);
+    console.log(decodedToken);
+    if (decodedToken) {
       next();
     } else {
       res.status(403).json({
-        msg: "You are not authenticated",
+        msg: "Not authorized",
       });
     }
   } catch (err) {
